@@ -56,6 +56,8 @@ minetest.register_craft({
 	}
 })
 
+if (minetest.get_modpath("moreores")) then
+
 minetest.register_tool("throwing:bow_silver", {
 	description = "Silver Bow",
 	inventory_image = "throwing_bow_stone.png",
@@ -87,6 +89,8 @@ minetest.register_craft({
 		{'farming:cotton', 'moreores:silver_ingot', ''},
 	}
 })
+
+end
 
 minetest.register_tool("throwing:bow_steel", {
 	description = "Steel Bow",
@@ -120,6 +124,8 @@ minetest.register_craft({
 	}
 })
 
+if (minetest.get_modpath("technic")) then
+
 minetest.register_tool("throwing:bow_carbon_steel", {
 	description = "Carbon Steel Bow",
 	inventory_image = "throwing_bow_carbon_steel.png",
@@ -152,6 +158,9 @@ minetest.register_craft({
 		{'farming:cotton', 'technic:carbon_steel_ingot', ''},
 	}
 })
+
+end
+
 minetest.register_tool("throwing:bow_bronze", {
 	description = "Bronze Bow",
 	inventory_image = "throwing_bow_bronze.png",
@@ -185,6 +194,8 @@ minetest.register_craft({
 	}
 })
 
+if (minetest.get_modpath("moreores")) then
+
 minetest.register_tool("throwing:bow_mithril", {
 	description = "Mithril Bow",
 	inventory_image = "throwing_bow_mithril.png",
@@ -217,6 +228,8 @@ minetest.register_craft({
 		{'farming:cotton', 'moreores:mithril_ingot', ''},
 	}
 })
+
+end
 
 dofile(minetest.get_modpath("throwing").."/arrow.lua")
 dofile(minetest.get_modpath("throwing").."/golden_arrow.lua")
