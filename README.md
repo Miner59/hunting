@@ -52,9 +52,13 @@ Added leather which you can get sometimes from cows, deers or horses. If you sho
 From leather you can make boots. 
 
 Crafting recipe for boots: (L=Leather)
-. . .
-L . L
-L . L
+
+.  .  .
+
+L  .  L
+
+L  .  L
+
 
 Boots let you run faster, if you have some with you. I got the idea from sprint mod, but most code is modified by myself.
 
