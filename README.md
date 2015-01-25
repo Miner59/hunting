@@ -10,10 +10,15 @@ Bows (from bad to best):
 
 Wooden Bow (crafted with jungle sticks)
 *Steel Bow
+
 Bronze Bow
+
 Carbon Steel Bow (needs technic mod)
+
 Silver Bow (needs moreores mod)
+
 Mithril Bow (needs moreores mod)
+
 
 Good bows gives the arrows more acceleration and they fly further.
 Better bows although don't break so fast, only bronze bow shoots quite far but breaks fast.
@@ -44,7 +49,15 @@ Kpgmobs:
 
 Includes some really sweet drawn animals. Needed to make changes, so that they drop items when hit by an arrow.
 Added leather which you can get sometimes from cows, deers or horses. If you shoot them with bows, you have a higher chance of getting leather.
-From leather you can make boots. And boots let you run faster, if you have some with you. I got the idea from sprint mod, but most code is modified by myself.
+From leather you can make boots. 
+
+Crafting recipe for boots: (L=Leather)
+. . .
+L . L
+L . L
+
+Boots let you run faster, if you have some with you. I got the idea from sprint mod, but most code is modified by myself.
+
 
 Animals:
 
