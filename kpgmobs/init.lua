@@ -1512,12 +1512,12 @@ kpgmobs:register_mob("kpgmobs:cow", {
 	view_range = 5,
 	-- ADDED TenPlus1 (right-clicking cow with empty bucket gives bucket of milk and moo sound)
 	on_rightclick = function(self, clicker)
-		tool = clicker:get_wielded_item():get_name()
+		local tool = clicker:get_wielded_item():get_name()
 		if tool == "farming:wheat" then
 			if not self.tamed then
 				if not minetest.setting_getbool("creative_mode") then
-					item:take_item()
-					clicker:set_wielded_item(item)
+					tool:take_item()
+					clicker:set_wielded_item(tool)
 				end
 				self.object:set_properties({
 					stepheight=0.9,		
