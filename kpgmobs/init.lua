@@ -1100,7 +1100,7 @@ kpgmobs:register_mob("kpgmobs:deer", {
 					item:take_item()
 					clicker:set_wielded_item(item)
 				end
-				if math.random(1,4<2) then 
+				if math.random(1,4)<2 then 
 				self.tamed = true
 				end
 			end
@@ -1247,7 +1247,7 @@ kpgmobs:register_mob("kpgmobs:wolf", {
 					item:take_item()
 					clicker:set_wielded_item(item)
 				end
-				if math.random(1,33<2) then 
+				if math.random(1,33)<2 then 
 				self.tamed = true
 				end
 			end
