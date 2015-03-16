@@ -913,7 +913,7 @@ kpgmobs:register_mob("kpgmobs:bee", {
 kpgmobs:register_spawn("kpgmobs:bee", {"default:dirt_with_grass"}, 20, -1, 7000, 1, 31000)
 
 minetest.register_craftitem("kpgmobs:bee", {
-	description = "bee",
+	description = "Bee",
 	inventory_image = "mobs_bee_inventar.png",
 	
 	on_place = function(itemstack, placer, pointed_thing)
@@ -949,8 +949,9 @@ local checktime = 0
 minetest.register_on_joinplayer(function(player)
 	local name = player:get_player_name()
 	players[name] = {
-		fast=false,
+		fast=10,
 		boots = nil,
+		floor= 0,
 		water=false,
 		checkx=0,
 		checkz=0,
@@ -977,7 +978,11 @@ minetest.register_globalstep(function(dtime)
 					players[name]["checkz"]=pos.z
 					local itemstack=nil
 					local fast=players[name]["fast"]
+					if fast==false then
+						fast=10
+					end
 					local boots=players[name]["boots"]
+					local floor=players[name]["floor"]
 					local water=players[name]["water"]
 					local node = minetest.get_node({x=pos.x,y=pos.y,z=pos.z})
 					local node1 = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z})
@@ -995,6 +1000,14 @@ minetest.register_globalstep(function(dtime)
 						end
 					end
 					if not water then
+						if minetest.get_item_group(node1.name, "fast")>0 or minetest.get_item_group(node.name, "fast")>0 then
+							floor=1
+						elseif floor==1 then
+							floor=2
+						else
+							floor=0
+						end
+						players[name]["floor"]=floor
 						local inv=player:get_inventory()
 						if boots~=nil then
 							itemstack=inv:get_stack("main",boots)
@@ -1013,12 +1026,26 @@ minetest.register_globalstep(function(dtime)
 							end
 						end
 					end
-					if ((boots==nil or water) and fast) then
-						players[name]["fast"]=false
+					if ((boots==nil or water) and fast>14) then
+						if floor==0 then
+						players[name]["fast"]=10
 						player:set_physics_override({speed=1.0})
+						else
+						players[name]["fast"]=14
+						player:set_physics_override({speed=1.4})
+						end
+					elseif ((floor==0 or water) and fast==14) then
+						players[name]["fast"]=10
+						player:set_physics_override({speed=1.0})
+					elseif ((floor>0 and not water) and fast==10) then
+						players[name]["fast"]=14
+						player:set_physics_override({speed=1.4})
+					elseif ((floor>0 and boots and not water) and fast<18) then --additional advantage:no wear for boots
+						players[name]["fast"]=18
+						player:set_physics_override({speed=1.8})
 					elseif (boots~=nil and not water) then
-						if not fast then
-							players[name]["fast"]=true
+						if fast<15 then
+							players[name]["fast"]=15
 							player:set_physics_override({speed=1.5})
 						end
 						local node2 = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z})
@@ -1029,10 +1056,10 @@ minetest.register_globalstep(function(dtime)
 							badground=10
 						end
 						local wear=itemstack:get_wear()
-						if wear+65535/(1200/badground) > 65535 then
+						if wear+65535/(4000/badground) > 65535 then
 							player:get_inventory():set_stack("main",boots,ItemStack(nil))
 						else
-							itemstack:set_wear (wear+65535/(2400/badground))
+							itemstack:set_wear (wear+65535/(4000/badground))
 							player:get_inventory():set_stack("main",boots,itemstack)
 						end
 					end
@@ -1084,6 +1111,10 @@ kpgmobs:register_mob("kpgmobs:deer", {
 		max = 1,},
 		{name = "kpgmobs:leather",
 		chance = 32,
+		min = 1,
+		max = 1,},
+		{name = "kpgmobs:antlers",
+		chance = 5,
 		min = 1,
 		max = 1,},
 
@@ -1182,6 +1213,76 @@ minetest.register_craftitem("kpgmobs:horseh1", {
 		return itemstack
 	end,
 })
+
+minetest.register_node("kpgmobs:antlers",{
+	description = "Antlers",
+	drawtype = "nodebox",
+	node_box = { type = "fixed", fixed = {-0.5, -0.5, 7/16, 0.5, 0.5, 0.5} },
+	selection_box = { type = "fixed", fixed = {-0.5, -0.5, 7/16, 0.5, 0.5, 0.5} },
+	tiles = {"kpgmobs_blank.png"},
+	inventory_image = "antlers.png",
+	wield_image = "antlers.png",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	sunlight_propagates = true,
+	groups = { choppy=2,dig_immediate=2 },
+	legacy_wallmounted = true,
+	sounds = default.node_sound_defaults(),
+	after_place_node = function(pos, placer, itemstack)
+		local node=minetest.get_node(pos)
+		if node.param2==1 then
+			pos={x=pos.x+0.3,y=pos.y,z=pos.z}
+		elseif node.param2==3 then
+			pos={x=pos.x-0.3,y=pos.y,z=pos.z}
+		elseif node.param2==0 then
+			pos={x=pos.x,y=pos.y,z=pos.z+0.3}
+		elseif node.param2==2 then
+			pos={x=pos.x,y=pos.y,z=pos.z-0.3}
+		end
+		local e = minetest.env:add_entity(pos,"kpgmobs:antlers_item")
+		local yaw = math.pi*2 - node.param2 * math.pi/2
+		e:setyaw(yaw)
+	end,
+	on_punch = function(pos,node,puncher)
+		if minetest.is_protected(pos,puncher:get_player_name()) then
+			return
+		end
+		local meta = minetest.env:get_meta(pos)
+		local objs = nil
+		objs = minetest.env:get_objects_inside_radius(pos, .5)
+		if objs then
+			for _, obj in ipairs(objs) do
+				if obj and obj:get_luaentity() and obj:get_luaentity().name == "kpgmobs:antlers_item" then
+					obj:remove()
+				end
+			end
+		end
+		minetest.remove_node(pos)			
+		minetest.env:add_item(pos, "kpgmobs:antlers")
+	end,
+})
+
+minetest.register_entity("kpgmobs:antlers_item",{
+	hp_max = 1,
+	visual="wielditem",
+	visual_size={x=.75,y=.75},
+	collisionbox = {0,0,0,0,0,0},
+	physical=false,
+	textures={"kpgmobs:antlers"},
+})
+
+minetest.register_abm({
+	nodenames = { "kpgmobs:antlers" },
+	interval = 600,
+	chance = 1,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		if #minetest.get_objects_inside_radius(pos, 0.5) > 0 then return end
+		local e = minetest.env:add_entity(pos,"kpgmobs:antlers_item")
+		local yaw = math.pi*2 - node.param2 * math.pi/2
+		e:setyaw(yaw)
+	end
+})
+
 minetest.register_entity("kpgmobs:horseh1", horse)
 
 minetest.register_craftitem("kpgmobs:horsepegh1", {
